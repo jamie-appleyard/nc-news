@@ -3,6 +3,7 @@ const request = require('supertest')
 const seed = require('../db/seeds/seed.js')
 const data = require('../db/data/test-data/index.js')
 const app = require('../app.js')
+const api_endpoints = require('../endpoints.json')
 
 beforeEach(() => seed(data));
 afterAll(() => db.end())
@@ -22,6 +23,18 @@ describe('/api/topics', () => {
                 })
             })
         });
+    })
+});
+
+describe('/api', () => {
+    test('GET 200: returns a JSON object representing the the available endpoints of the API and their functionality', () => {
+        return request(app)
+        .get('/api')
+        .expect(200)
+        .then((result) => {
+            const {endpoints} = result.body
+            expect(endpoints).toEqual(api_endpoints)
+        })
     })
 });
 
