@@ -4,7 +4,7 @@ const {
 
 const getTopics = (req, res, next) => {
     selectTopics().then((rows) => {
-        res.status(200).send({status:200, rows: rows})
+        res.status(200).send({topics: rows})
     })
 }
 

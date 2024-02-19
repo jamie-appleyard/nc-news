@@ -13,19 +13,22 @@ describe('/api/topics', () => {
         .get('/api/topics')
         .expect(200)
         .then((response) => {
-            const rows = response.body.rows
-            expect(rows).toHaveLength(3)
-            rows.forEach((row) => {
-                expect(row).toMatchObject({
+            const {topics} = response.body
+            expect(topics).toHaveLength(3)
+            topics.forEach((topic) => {
+                expect(topic).toMatchObject({
                     slug : expect.any(String),
                     description : expect.any(String)
                 })
             })
         });
     })
-    test('GET 404: returns an appropriate status and message when an invalid URL is entered', () => {
+});
+
+describe('/api/tropics', () => {
+    test('GET 404: returns an appropriate status when an invalid URL is entered', () => {
         return request(app)
         .get('/api/tropics')
         .expect(404)
     })
-});
+})
