@@ -33,7 +33,9 @@ describe('/api/articles/:article_id', () => {
         .expect(200)
         .then((response) => {
             const {article} = response.body
+            expect(article.article_id).toBe(1)
             expect(article).toMatchObject({
+                article_id: expect.any(Number),
                 title: expect.any(String),
                 topic: expect.any(String),
                 author: expect.any(String),
@@ -44,21 +46,21 @@ describe('/api/articles/:article_id', () => {
             })
         })
     });
-    test('GET 400: returns an appropriate status and message when passed a valid id that does not exist', () => {
+    test('GET 404: returns an appropriate status and message when passed a valid id that does not exist', () => {
         return request(app)
         .get('/api/articles/999')
-        .expect(400)
-        .then((response) => {
-            expect(response.body.status).toBe(400)
-            expect(response.body.msg).toBe('ID does\'nt exist')
-        })
-    });
-    test('GET 404: returns appropriate status and message when given an invalid ID as a parameter', () => {
-        return request(app)
-        .get('/api/articles/myarticle')
         .expect(404)
         .then((response) => {
             expect(response.body.status).toBe(404)
+            expect(response.body.msg).toBe('ID does\'nt exist')
+        })
+    });
+    test('GET 400: returns appropriate status and message when given an invalid ID as a parameter', () => {
+        return request(app)
+        .get('/api/articles/myarticle')
+        .expect(400)
+        .then((response) => {
+            expect(response.body.status).toBe(400)
             expect(response.body.msg).toBe('Invalid ID parameter')
         })
     })
