@@ -1,3 +1,9 @@
 # Northcoders News API
 
-For instructions, please head over to [L2C NC News](https://l2c.northcoders.com/courses/be/nc-news).
+*To clone and run this repo*
+- Git clone https://github.com/jamie-appleyard/nc-news.git
+- Create .env.test file at root level
+    - Add PGDATABASE=nc_news_test
+- Create .env.development file at root level
+    - Add PGDATABASE=nc_news
+- Npm install
