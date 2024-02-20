@@ -9,6 +9,18 @@ require('jest-sorted')
 beforeEach(() => seed(data));
 afterAll(() => db.end())
 
+describe('/api', () => {
+    test('GET 200: returns a JSON object representing the the available endpoints of the API and their functionality', () => {
+        return request(app)
+        .get('/api')
+        .expect(200)
+        .then((result) => {
+            const {endpoints} = result.body
+            expect(endpoints).toEqual(api_endpoints)
+        })
+    })
+});
+
 describe('/api/topics', () => {
     test('GET 200: should return an array of all topics objects', () => {
         return request(app)
@@ -93,16 +105,54 @@ describe('/api/articles', () => {
     })
 })
 
-describe('/api', () => {
-    test('GET 200: returns a JSON object representing the the available endpoints of the API and their functionality', () => {
+describe('/api/articles/:article_id/comments', () => {
+    test('returns an array of all comments for the article with the given article_id', () => {
         return request(app)
-        .get('/api')
+        .get('/api/articles/1/comments')
         .expect(200)
         .then((result) => {
-            const {endpoints} = result.body
-            expect(endpoints).toEqual(api_endpoints)
+            const { comments } = result.body
+            comments.forEach((comment) => {
+                expect(comment).toMatchObject({
+                    comment_id: expect.any(Number),
+                    votes: expect.any(Number),
+                    created_at: expect.any(String),
+                    author: expect.any(String),
+                    body: expect.any(String),
+                    article_id: expect.any(Number)
+                })
+                expect(comment.article_id).toBe(1)
+            })
+            expect(comments).toBeSorted({ key : 'created_at', descending : true })
         })
-    })
+    });
+    test('GET 200: Returns an empty array if passed a valid article_id with no associated comments', () => {
+        return request(app)
+        .get('/api/articles/7/comments')
+        .expect(200)
+        .then((result) => {
+            const { comments } = result.body
+            expect(comments).toHaveLength(0)
+        })
+    });
+    test('GET 404: Returns an appropriate status and error message when passed a valid article ID that does not exist', () => {
+        return request(app)
+        .get('/api/articles/9999/comments')
+        .expect(404)
+        .then((result) => {
+            expect(result.body.status).toBe(404)
+            expect(result.body.msg).toBe('ID does\'nt exist')
+        })
+    });
+    test('GET 400: Returns an appropriate error message and status when passed an invalid article_id', () => {
+        return request(app)
+        .get('/api/articles/myarticle/comments')
+        .expect(400)
+        .then((response) => {
+            expect(response.body.status).toBe(400)
+            expect(response.body.msg).toBe('Invalid ID parameter')
+        })
+    });
 });
 
 describe('/api/tropics', () => {
