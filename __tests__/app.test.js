@@ -76,7 +76,61 @@ describe('/api/articles/:article_id', () => {
             expect(response.body.status).toBe(400)
             expect(response.body.msg).toBe('Invalid ID parameter')
         })
-    })
+    });
+    test('PATCH 201: updates the value of votes on an article with a matching article_id', () => {
+        const patchObj = { inc_votes : 10 }
+        return request(app)
+        .patch('/api/articles/1')
+        .send(patchObj)
+        .expect(200)
+        .then((response) => {
+            const { article } = response.body
+            expect(article).toMatchObject({
+                article_id: expect.any(Number),
+                title: expect.any(String),
+                topic: expect.any(String),
+                author: expect.any(String),
+                body: expect.any(String),
+                created_at: expect.any(String),
+                votes: expect.any(Number),
+                article_img_url: expect.any(String)
+            })
+            expect(article.votes).toBe(110)
+        })
+    });
+    test('PATCH 400: Respond with an appropriate status code and error message when passed invalid patch request data', () => {
+        const patchObj = { bad_data : 'I\'m bad data' }
+        return request(app)
+        .patch('/api/articles/1')
+        .send(patchObj)
+        .expect(400)
+        .then((response) => {
+            expect(response.body.status).toBe(400)
+            expect(response.body.msg).toBe('Bad request')
+        })
+    });
+    test('PATCH 404: Respond with an appropriate status code and error message when passed a valid ID that does not exist', () => {
+        const patchObj = { inc_votes : 10 }
+        return request(app)
+        .patch('/api/articles/99999')
+        .send(patchObj)
+        .expect(404)
+        .then((response) => {
+            expect(response.body.status).toBe(404)
+            expect(response.body.msg).toBe('ID does\'nt exist')
+        })
+    });
+    test('PATCH 400: Respond with an appropriate status code and error message when passed an invalid ID', () => {
+        const patchObj = { inc_votes : 10 }
+        return request(app)
+        .patch('/api/articles/myArticle')
+        .send(patchObj)
+        .expect(400)
+        .then((response) => {
+            expect(response.body.status).toBe(400)
+            expect(response.body.msg).toBe('Invalid ID parameter')
+        })
+    });
 });
 
 describe('/api/articles', () => {
@@ -232,7 +286,6 @@ describe('/api/articles/:article_id/comments', () => {
         })
     });
 });
-//POST 404 invalid article ID
 
 describe('/api/tropics', () => {
     test('GET 404: returns an appropriate status when an invalid URL is entered', () => {
