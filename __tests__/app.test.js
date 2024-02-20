@@ -4,6 +4,7 @@ const seed = require('../db/seeds/seed.js')
 const data = require('../db/data/test-data/index.js')
 const app = require('../app.js')
 const api_endpoints = require('../endpoints.json')
+require('jest-sorted')
 
 beforeEach(() => seed(data));
 afterAll(() => db.end())
@@ -65,6 +66,32 @@ describe('/api/articles/:article_id', () => {
         })
     })
 });
+
+describe('/api/articles', () => {
+    test('GET 200: Returns an array of articles with a comment count column added', () => {
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then((response) => {
+            const { articles } = response.body
+            expect(articles).toHaveLength(13)
+            expect(articles).toBeSorted({ key: 'created_at', descending: true})
+            articles.forEach((article) => {
+                expect(article).toMatchObject({
+                    article_id: expect.any(Number),
+                    title: expect.any(String),
+                    topic: expect.any(String),
+                    author: expect.any(String),
+                    created_at: expect.any(String),
+                    votes: expect.any(Number),
+                    article_img_url: expect.any(String),
+                    comment_count: expect.any(Number)
+                })
+                expect(article.hasOwnProperty('body')).toBe(false)
+            })
+        })
+    })
+})
 
 describe('/api', () => {
     test('GET 200: returns a JSON object representing the the available endpoints of the API and their functionality', () => {
