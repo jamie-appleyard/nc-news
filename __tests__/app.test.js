@@ -153,6 +153,28 @@ describe('/api/articles/:article_id/comments', () => {
             expect(response.body.msg).toBe('Invalid ID parameter')
         })
     });
+    test('POST 200: Should add a new comment with the given article_id parameter and return the new row data', () => {
+        const newComment = {
+            username: 'lurker',
+            body: 'Much WOW 0o0 ...'
+        }
+        return request(app)
+        .post('/api/articles/7/comments')
+        .send(newComment)
+        .then((response) => {
+            const { comment } = response.body
+            expect(comment).toMatchObject({
+                comment_id: expect.any(Number),
+                votes: expect.any(Number),
+                created_at: expect.any(String),
+                author: expect.any(String),
+                body: expect.any(String),
+                article_id: expect.any(Number)
+            })
+            expect(comment.author).toBe('lurker')
+            expect(comment.body).toBe('Much WOW 0o0 ...')
+        })
+    });
 });
 
 describe('/api/tropics', () => {

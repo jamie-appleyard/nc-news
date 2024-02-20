@@ -1,4 +1,5 @@
 const db = require('../db/connection.js')
+const format = require('pg-format')
 
 const selectTopics = () => {
     const queryString = `SELECT * FROM topics`
@@ -32,9 +33,20 @@ const selectCommentsByArticleID = (article_id) => {
     })
 }
 
+const insertCommentByArticleID = (article_id, {username, body}) => {
+    const votes = 0
+    const createdAt = new Date()
+    const valuesArr = [Number(article_id), username, body, votes, createdAt]
+    return db.query(format(`INSERT INTO comments (article_id, author, body, votes, created_at) VALUES %L RETURNING *`, [valuesArr])).then((data) => {
+        const {rows} = data
+        return rows[0]
+    })
+}
+
 module.exports = {
     selectTopics,
     selectArticleByID,
     selectArticles,
-    selectCommentsByArticleID
+    selectCommentsByArticleID,
+    insertCommentByArticleID
 }
