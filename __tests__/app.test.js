@@ -74,10 +74,10 @@ describe('/api/articles/:article_id', () => {
         .expect(400)
         .then((response) => {
             expect(response.body.status).toBe(400)
-            expect(response.body.msg).toBe('Invalid ID parameter')
+            expect(response.body.msg).toBe('Invalid parameter')
         })
     });
-    test('PATCH 201: updates the value of votes on an article with a matching article_id', () => {
+    test('PATCH 200: updates the value of votes by a given number when number is positive on an article with a matching article_id and returns matching article', () => {
         const patchObj = { inc_votes : 10 }
         return request(app)
         .patch('/api/articles/1')
@@ -96,17 +96,41 @@ describe('/api/articles/:article_id', () => {
                 article_img_url: expect.any(String)
             })
             expect(article.votes).toBe(110)
+            expect(article.article_id).toBe(1)
         })
     });
-    test('PATCH 400: Respond with an appropriate status code and error message when passed invalid patch request data', () => {
+    test('PATCH 200: updates the value of votes by a given number when number is negative on an article with a matching article_id and returns matching article', () => {
+        const patchObj = { inc_votes : -50 }
+        return request(app)
+        .patch('/api/articles/1')
+        .send(patchObj)
+        .expect(200)
+        .then((response) => {
+            const { article } = response.body
+            expect(article).toMatchObject({
+                article_id: expect.any(Number),
+                title: expect.any(String),
+                topic: expect.any(String),
+                author: expect.any(String),
+                body: expect.any(String),
+                created_at: expect.any(String),
+                votes: expect.any(Number),
+                article_img_url: expect.any(String)
+            })
+            expect(article.votes).toBe(50)
+            expect(article.article_id).toBe(1)
+        })
+    });
+    test('PATCH 200: Respond with an uneditted article with matching article id if passed invalid patch object data', () => {
         const patchObj = { bad_data : 'I\'m bad data' }
         return request(app)
         .patch('/api/articles/1')
         .send(patchObj)
-        .expect(400)
+        .expect(200)
         .then((response) => {
-            expect(response.body.status).toBe(400)
-            expect(response.body.msg).toBe('Bad request')
+            const { article } = response.body
+            expect(article.article_id).toBe(1)
+            expect(article.votes).toBe(100)
         })
     });
     test('PATCH 404: Respond with an appropriate status code and error message when passed a valid ID that does not exist', () => {
@@ -128,7 +152,18 @@ describe('/api/articles/:article_id', () => {
         .expect(400)
         .then((response) => {
             expect(response.body.status).toBe(400)
-            expect(response.body.msg).toBe('Invalid ID parameter')
+            expect(response.body.msg).toBe('Invalid parameter')
+        })
+    });
+    test('PATCH 400: Respond with an appropriate status code and error message when passed a patch object containing an invalid value', () => {
+        const patchObj = { inc_votes : 'I am bad data' }
+        return request(app)
+        .patch('/api/articles/1')
+        .send(patchObj)
+        .expect(400)
+        .then((response) => {
+            expect(response.body.status).toBe(400)
+            expect(response.body.msg).toBe('Invalid parameter')
         })
     });
 });
@@ -204,7 +239,7 @@ describe('/api/articles/:article_id/comments', () => {
         .expect(400)
         .then((response) => {
             expect(response.body.status).toBe(400)
-            expect(response.body.msg).toBe('Invalid ID parameter')
+            expect(response.body.msg).toBe('Invalid parameter')
         })
     });
     test('POST 200: Should add a new comment with the given article_id parameter and return the new row data', () => {
@@ -283,7 +318,7 @@ describe('/api/articles/:article_id/comments', () => {
         .expect(400)
         .then((response) => {
             expect(response.body.status).toBe(400)
-            expect(response.body.msg).toBe('Invalid ID parameter')
+            expect(response.body.msg).toBe('Invalid parameter')
         })
     });
 });

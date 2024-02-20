@@ -42,7 +42,7 @@ app.use((err, request, response, next) => {
 
 app.use((err, request, response, next) => {
     if (err.code === '22P02') {
-        response.status(400).send({status:400, msg: 'Invalid ID parameter'})
+        response.status(400).send({status:400, msg: 'Invalid parameter'})
     }
     next(err)
 })
