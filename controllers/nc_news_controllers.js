@@ -4,7 +4,8 @@ const {
     selectTopics,
     selectArticleByID,
     selectArticles,
-    selectCommentsByArticleID
+    selectCommentsByArticleID,
+    insertCommentByArticleID
 } = require('../models/nc_news_models.js')
 
 const getEndpoints = (req, res, next) => {
@@ -46,10 +47,20 @@ const getCommentsByArticleID = (req, res, next) => {
     })
 }
 
+const postCommentByArticleID = (req, res, next) => {
+    const { article_id } = req.params
+    Promise.all([selectArticleByID(article_id), insertCommentByArticleID(article_id, req.body)]).then((promiseArr) => {
+        res.status(201).send({ comment : promiseArr[1] })
+    }).catch((err) => {
+        next(err)
+    })
+}
+
 module.exports = {
     getTopics,
     getEndpoints,
     getArticleByID,
     getArticles,
-    getCommentsByArticleID
+    getCommentsByArticleID,
+    postCommentByArticleID
 }

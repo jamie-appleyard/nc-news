@@ -153,7 +153,86 @@ describe('/api/articles/:article_id/comments', () => {
             expect(response.body.msg).toBe('Invalid ID parameter')
         })
     });
+    test('POST 200: Should add a new comment with the given article_id parameter and return the new row data', () => {
+        const newComment = {
+            username: 'lurker',
+            body: 'Much WOW 0o0 ...'
+        }
+        return request(app)
+        .post('/api/articles/7/comments')
+        .send(newComment)
+        .expect(201)
+        .then((response) => {
+            const { comment } = response.body
+            expect(comment).toMatchObject({
+                comment_id: expect.any(Number),
+                votes: expect.any(Number),
+                created_at: expect.any(String),
+                author: expect.any(String),
+                body: expect.any(String),
+                article_id: expect.any(Number)
+            })
+            expect(comment.author).toBe('lurker')
+            expect(comment.body).toBe('Much WOW 0o0 ...')
+        })
+    });
+    test('POST 400: Should respond with an appropriate status code and message when passed an invalid object', () => {
+        const newComment = {
+            body: 'Much WOW 0o0 ...'
+        }
+        return request(app)
+        .post('/api/articles/7/comments')
+        .send(newComment)
+        .expect(400)
+        .then((response) => {
+            expect(response.body.status).toBe(400)
+            expect(response.body.msg).toBe('Bad request')
+        })
+    });
+    test('POST 400: Should respond with an appropriate status code and message when passed an invalid username', () => {
+        const newComment = {
+            username: 'japple1996',
+            body: 'Much WOW 0o0 ...'
+        }
+        return request(app)
+        .post('/api/articles/7/comments')
+        .send(newComment)
+        .expect(400)
+        .then((response) => {
+            expect(response.body.status).toBe(400)
+            expect(response.body.msg).toBe('Bad request')
+        })
+    });
+    test('POST 404: Should respond with an appropriate status code and message when passed an article ID that does not exist', () => {
+        const newComment = {
+            username: 'lurker',
+            body: 'Much WOW 0o0 ...'
+        }
+        return request(app)
+        .post('/api/articles/9999/comments')
+        .send(newComment)
+        .expect(404)
+        .then((response) => {
+            expect(response.body.status).toBe(404)
+            expect(response.body.msg).toBe('ID does\'nt exist')
+        })
+    });
+    test('POST 404: Should respond with an appropriate status code and message when passed an article ID that is invalid', () => {
+        const newComment = {
+            username: 'lurker',
+            body: 'Much WOW 0o0 ...'
+        }
+        return request(app)
+        .post('/api/articles/myArticle/comments')
+        .send(newComment)
+        .expect(400)
+        .then((response) => {
+            expect(response.body.status).toBe(400)
+            expect(response.body.msg).toBe('Invalid ID parameter')
+        })
+    });
 });
+//POST 404 invalid article ID
 
 describe('/api/tropics', () => {
     test('GET 404: returns an appropriate status when an invalid URL is entered', () => {
