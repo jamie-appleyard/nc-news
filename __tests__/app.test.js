@@ -160,7 +160,7 @@ describe('/api/articles', () => {
 })
 
 describe('/api/articles/:article_id/comments', () => {
-    test('returns an array of all comments for the article with the given article_id', () => {
+    test('GET 200: returns an array of all comments for the article with the given article_id', () => {
         return request(app)
         .get('/api/articles/1/comments')
         .expect(200)
@@ -220,14 +220,15 @@ describe('/api/articles/:article_id/comments', () => {
             const { comment } = response.body
             expect(comment).toMatchObject({
                 comment_id: expect.any(Number),
-                votes: expect.any(Number),
-                created_at: expect.any(String),
-                author: expect.any(String),
                 body: expect.any(String),
-                article_id: expect.any(Number)
+                article_id: expect.any(Number),
+                author: expect.any(String),
+                votes: expect.any(Number),
+                created_at: expect.any(String)
             })
             expect(comment.author).toBe('lurker')
             expect(comment.body).toBe('Much WOW 0o0 ...')
+            expect(comment.article_id).toBe(7)
         })
     });
     test('POST 400: Should respond with an appropriate status code and message when passed an invalid object', () => {
@@ -271,7 +272,7 @@ describe('/api/articles/:article_id/comments', () => {
             expect(response.body.msg).toBe('ID does\'nt exist')
         })
     });
-    test('POST 404: Should respond with an appropriate status code and message when passed an article ID that is invalid', () => {
+    test('POST 400: Should respond with an appropriate status code and message when passed an article ID that is invalid', () => {
         const newComment = {
             username: 'lurker',
             body: 'Much WOW 0o0 ...'

@@ -37,10 +37,8 @@ const insertCommentByArticleID = (article_id, {username, body}) => {
     if (!article_id || !username || !body) {
         return Promise.reject({status:400, msg: 'Bad request'})
     }
-    const votes = 0
-    const createdAt = new Date()
-    const valuesArr = [Number(article_id), username, body, votes, createdAt]
-    return db.query(format(`INSERT INTO comments (article_id, author, body, votes, created_at) VALUES %L RETURNING *`, [valuesArr])).then((data) => {
+    const valuesArr = [Number(article_id), username, body]
+    return db.query(format(`INSERT INTO comments (article_id, author, body) VALUES %L RETURNING *`, [valuesArr])).then((data) => {
         const {rows} = data
         return rows[0]
     })
