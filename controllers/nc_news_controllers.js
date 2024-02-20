@@ -14,6 +14,8 @@ const getEndpoints = (req, res, next) => {
 const getTopics = (req, res, next) => {
     selectTopics().then((rows) => {
         res.status(200).send({topics: rows})
+    }).catch((err) => {
+        next(err)
     })
 }
 
@@ -29,6 +31,8 @@ const getArticleByID = (req, res, next) => {
 const getArticles = (req, res, next) => {
     selectArticles().then((articles) => {
         res.status(200).send({articles})
+    }).catch((err) => {
+        next(err)
     })
 }
 

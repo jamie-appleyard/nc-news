@@ -85,7 +85,7 @@ describe('/api/articles', () => {
                     created_at: expect.any(String),
                     votes: expect.any(Number),
                     article_img_url: expect.any(String),
-                    comment_count: expect.any(String)
+                    comment_count: expect.any(Number)
                 })
                 expect(article.hasOwnProperty('body')).toBe(false)
             })
