@@ -5,7 +5,8 @@ const {
     selectArticleByID,
     selectArticles,
     selectCommentsByArticleID,
-    insertCommentByArticleID
+    insertCommentByArticleID,
+    deleteCommentByID
 } = require('../models/nc_news_models.js')
 
 const getEndpoints = (req, res, next) => {
@@ -56,11 +57,21 @@ const postCommentByArticleID = (req, res, next) => {
     })
 }
 
+const deleteComment = (req, res, next) => {
+    const { comment_id } = req.params
+    deleteCommentByID(comment_id).then(() => {
+        res.status(204).send()
+    }).catch((err) => {
+        next(err)
+    })
+}
+
 module.exports = {
     getTopics,
     getEndpoints,
     getArticleByID,
     getArticles,
     getCommentsByArticleID,
-    postCommentByArticleID
+    postCommentByArticleID,
+    deleteComment
 }

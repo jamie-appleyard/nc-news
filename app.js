@@ -6,7 +6,8 @@ const {
     getArticleByID,
     getArticles,
     getCommentsByArticleID,
-    postCommentByArticleID
+    postCommentByArticleID,
+    deleteComment
 } = require('./controllers/nc_news_controllers.js')
 
 app.use(express.json())
@@ -28,6 +29,9 @@ app.get('/api/articles/:article_id/comments', getCommentsByArticleID)
 
 //Posts a new comment with a specific article ID
 app.post('/api/articles/:article_id/comments', postCommentByArticleID)
+
+//Deletes comment by ID
+app.delete('/api/comments/:comment_id', deleteComment)
 
 app.use((err, request, response, next) => {
     if (err.status && err.msg) {
