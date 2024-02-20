@@ -4,7 +4,8 @@ const {
     getTopics,
     getEndpoints,
     getArticleByID,
-    getArticles
+    getArticles,
+    getCommentsByArticleID
 } = require('./controllers/nc_news_controllers.js')
 
 app.use(express.json())
@@ -19,6 +20,8 @@ app.get('/api/topics', getTopics)
 app.get('/api/articles/:article_id', getArticleByID)
 
 app.get('/api/articles', getArticles)
+
+app.get('/api/articles/:article_id/comments', getCommentsByArticleID)
 
 app.use((err, request, response, next) => {
     if (err.status && err.msg) {
