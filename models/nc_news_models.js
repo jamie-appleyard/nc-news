@@ -34,6 +34,9 @@ const selectCommentsByArticleID = (article_id) => {
 }
 
 const insertCommentByArticleID = (article_id, {username, body}) => {
+    if (!article_id || !username || !body) {
+        return Promise.reject({status:400, msg: 'Bad request'})
+    }
     const votes = 0
     const createdAt = new Date()
     const valuesArr = [Number(article_id), username, body, votes, createdAt]

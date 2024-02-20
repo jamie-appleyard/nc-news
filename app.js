@@ -43,4 +43,11 @@ app.use((err, request, response, next) => {
     next(err)
 })
 
+app.use((err, request, response, next) => {
+    if (err.code === '23503') {
+        response.status(400).send({status:400, msg: 'Bad request'})
+    }
+    next(err)
+})
+
 module.exports = app

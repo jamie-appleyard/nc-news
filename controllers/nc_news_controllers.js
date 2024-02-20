@@ -49,10 +49,10 @@ const getCommentsByArticleID = (req, res, next) => {
 
 const postCommentByArticleID = (req, res, next) => {
     const { article_id } = req.params
-    insertCommentByArticleID(article_id, req.body).then((comment) => {
-        res.status(201).send({comment})
+    Promise.all([selectArticleByID(article_id), insertCommentByArticleID(article_id, req.body)]).then((promiseArr) => {
+        res.status(201).send({ comment : promiseArr[1] })
     }).catch((err) => {
-        console.log(err)
+        next(err)
     })
 }
 
