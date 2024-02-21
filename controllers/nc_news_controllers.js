@@ -34,7 +34,7 @@ const getArticleByID = (req, res, next) => {
 }
 
 const getArticles = (req, res, next) => {
-    selectArticles().then((articles) => {
+    selectArticles(req.query).then((articles) => {
         res.status(200).send({articles})
     }).catch((err) => {
         next(err)
