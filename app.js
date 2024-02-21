@@ -7,6 +7,7 @@ const {
     getArticles,
     getCommentsByArticleID,
     postCommentByArticleID,
+    deleteComment,
     patchArticleByID,
     getAllUsers
 } = require('./controllers/nc_news_controllers.js')
@@ -33,6 +34,9 @@ app.get('/api/articles/:article_id/comments', getCommentsByArticleID)
 
 //Posts a new comment with a specific article ID
 app.post('/api/articles/:article_id/comments', postCommentByArticleID)
+
+//Deletes comment by ID
+app.delete('/api/comments/:comment_id', deleteComment)
 
 //Get all users
 app.get('/api/users', getAllUsers)
