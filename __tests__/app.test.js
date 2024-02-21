@@ -47,6 +47,7 @@ describe('/api/articles/:article_id', () => {
         .then((response) => {
             const {article} = response.body
             expect(article.article_id).toBe(1)
+            expect(article.comment_count).toBe(11)
             expect(article).toMatchObject({
                 article_id: expect.any(Number),
                 title: expect.any(String),
@@ -55,7 +56,8 @@ describe('/api/articles/:article_id', () => {
                 body: expect.any(String),
                 created_at: expect.any(String),
                 votes: expect.any(Number),
-                article_img_url: expect.any(String)
+                article_img_url: expect.any(String),
+                comment_count: expect.any(Number)
             })
         })
     });
