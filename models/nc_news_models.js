@@ -67,6 +67,13 @@ const updateArticleByID = (article_id, { inc_votes }) => {
     })
 }
 
+const selectAllUsers = () => {
+    return db.query(`SELECT * FROM users`).then((data) => {
+        const { rows } = data
+        return rows
+    })
+}
+
 module.exports = {
     selectTopics,
     selectArticleByID,
@@ -74,5 +81,6 @@ module.exports = {
     selectCommentsByArticleID,
     insertCommentByArticleID,
     deleteCommentByID,
-    updateArticleByID
+    updateArticleByID,
+    selectAllUsers
 }
