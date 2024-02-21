@@ -323,6 +323,24 @@ describe('/api/articles/:article_id/comments', () => {
     });
 });
 
+describe('/api/users', () => {
+    test('GET 200: Returns an array of all users', () => {
+        return request(app)
+        .get('/api/users')
+        .expect(200)
+        .then((response) => {
+            const { users } = response.body
+            users.forEach((user) => {
+                expect(user).toMatchObject({
+                    username: expect.any(String),
+                    name: expect.any(String),
+                    avatar_url: expect.any(String)
+                })
+            })
+        })
+    });
+});
+
 describe('/api/tropics', () => {
     test('GET 404: returns an appropriate status when an invalid URL is entered', () => {
         return request(app)
