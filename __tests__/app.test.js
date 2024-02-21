@@ -344,7 +344,7 @@ describe('/api/comments/:comment_id', () => {
         .expect(400)
         .then((response) => {
             expect(response.body.status).toBe(400)
-            expect(response.body.msg).toBe('Invalid ID parameter')
+            expect(response.body.msg).toBe('Invalid parameter')
         })
     })
 });

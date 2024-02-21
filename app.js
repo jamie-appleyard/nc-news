@@ -7,7 +7,7 @@ const {
     getArticles,
     getCommentsByArticleID,
     postCommentByArticleID,
-    deleteComment
+    deleteComment,
     patchArticleByID
 } = require('./controllers/nc_news_controllers.js')
 
