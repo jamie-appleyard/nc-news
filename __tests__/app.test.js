@@ -323,6 +323,32 @@ describe('/api/articles/:article_id/comments', () => {
     });
 });
 
+describe('/api/comments/:comment_id', () => {
+    test('DELETE 204: Deletes the comment with matching comment id', () => {
+        return request(app)
+        .delete('/api/comments/1')
+        .expect(204)
+    });
+    test('DELETE 404: Returns an appropriate status and message when passed a valid comment ID that does not exist', () => {
+        return request(app)
+        .delete('/api/comments/9999')
+        .expect(404)
+        .then((response) => {
+            expect(response.body.status).toBe(404)
+            expect(response.body.msg).toBe('ID does\'nt exist')
+        })
+    })
+    test('DELETE 400: Returns an appropriate status and message when passed an invalid comment ID', () => {
+        return request(app)
+        .delete('/api/comments/myComment')
+        .expect(400)
+        .then((response) => {
+            expect(response.body.status).toBe(400)
+            expect(response.body.msg).toBe('Invalid ID parameter')
+        })
+    })
+});
+
 describe('/api/tropics', () => {
     test('GET 404: returns an appropriate status when an invalid URL is entered', () => {
         return request(app)

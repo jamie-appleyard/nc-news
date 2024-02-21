@@ -6,6 +6,7 @@ const {
     selectArticles,
     selectCommentsByArticleID,
     insertCommentByArticleID,
+    deleteCommentByID
     updateArticleByID
 } = require('../models/nc_news_models.js')
 
@@ -59,6 +60,11 @@ const postCommentByArticleID = (req, res, next) => {
     })
 }
 
+
+const deleteComment = (req, res, next) => {
+    const { comment_id } = req.params
+    deleteCommentByID(comment_id).then(() => {
+        res.status(204).send()
 const patchArticleByID = (req, res, next) => {
     const { article_id } = req.params
     Promise.all([selectArticleByID(article_id), updateArticleByID(article_id, req.body)])
@@ -76,5 +82,6 @@ module.exports = {
     getArticles,
     getCommentsByArticleID,
     postCommentByArticleID,
+    deleteComment
     patchArticleByID
 }
