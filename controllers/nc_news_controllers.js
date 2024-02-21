@@ -7,6 +7,7 @@ const {
     selectCommentsByArticleID,
     insertCommentByArticleID,
     deleteCommentByID
+    updateArticleByID
 } = require('../models/nc_news_models.js')
 
 const getEndpoints = (req, res, next) => {
@@ -41,7 +42,8 @@ const getArticles = (req, res, next) => {
 
 const getCommentsByArticleID = (req, res, next) => {
     const { article_id } = req.params
-    Promise.all([selectArticleByID(article_id), selectCommentsByArticleID(article_id)]).then((promiseArr) => {
+    Promise.all([selectArticleByID(article_id), selectCommentsByArticleID(article_id)])
+    .then((promiseArr) => {
         res.status(200).send({ comments : promiseArr[1]})
     }).catch((err) => {
         next(err)
@@ -50,17 +52,24 @@ const getCommentsByArticleID = (req, res, next) => {
 
 const postCommentByArticleID = (req, res, next) => {
     const { article_id } = req.params
-    Promise.all([selectArticleByID(article_id), insertCommentByArticleID(article_id, req.body)]).then((promiseArr) => {
+    Promise.all([selectArticleByID(article_id), insertCommentByArticleID(article_id, req.body)])
+    .then((promiseArr) => {
         res.status(201).send({ comment : promiseArr[1] })
     }).catch((err) => {
         next(err)
     })
 }
 
+
 const deleteComment = (req, res, next) => {
     const { comment_id } = req.params
     deleteCommentByID(comment_id).then(() => {
         res.status(204).send()
+const patchArticleByID = (req, res, next) => {
+    const { article_id } = req.params
+    Promise.all([selectArticleByID(article_id), updateArticleByID(article_id, req.body)])
+    .then((promiseArr) => {
+        res.status(200).send({ article : promiseArr[1] })
     }).catch((err) => {
         next(err)
     })
@@ -74,4 +83,5 @@ module.exports = {
     getCommentsByArticleID,
     postCommentByArticleID,
     deleteComment
+    patchArticleByID
 }

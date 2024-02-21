@@ -8,6 +8,7 @@ const {
     getCommentsByArticleID,
     postCommentByArticleID,
     deleteComment
+    patchArticleByID
 } = require('./controllers/nc_news_controllers.js')
 
 app.use(express.json())
@@ -20,6 +21,9 @@ app.get('/api/topics', getTopics)
 
 //Returns an article object from the DB with an article_id matching the given parameter
 app.get('/api/articles/:article_id', getArticleByID)
+
+//Updates the votes amount on an article
+app.patch('/api/articles/:article_id', patchArticleByID)
 
 //Returns all articles with comment numbers
 app.get('/api/articles', getArticles)
@@ -42,7 +46,7 @@ app.use((err, request, response, next) => {
 
 app.use((err, request, response, next) => {
     if (err.code === '22P02') {
-        response.status(400).send({status:400, msg: 'Invalid ID parameter'})
+        response.status(400).send({status:400, msg: 'Invalid parameter'})
     }
     next(err)
 })

@@ -37,20 +37,29 @@ const insertCommentByArticleID = (article_id, {username, body}) => {
     if (!article_id || !username || !body) {
         return Promise.reject({status:400, msg: 'Bad request'})
     }
-    const votes = 0
-    const createdAt = new Date()
-    const valuesArr = [Number(article_id), username, body, votes, createdAt]
-    return db.query(format(`INSERT INTO comments (article_id, author, body, votes, created_at) VALUES %L RETURNING *`, [valuesArr])).then((data) => {
+    const valuesArr = [Number(article_id), username, body]
+    return db.query(format(`INSERT INTO comments (article_id, author, body) VALUES %L RETURNING *`, [valuesArr])).then((data) => {
         const {rows} = data
         return rows[0]
     })
 }
+
 
 const deleteCommentByID = (comment_id) => {
     return db.query(`DELETE FROM comments WHERE comment_id=$1 RETURNING *;`, [comment_id]).then((result) => {
         if (result.rows.length === 0) {
             return Promise.reject({status:404, msg:'ID does\'nt exist'})
         }
+const updateArticleByID = (article_id, { inc_votes }) => {
+    if (!inc_votes) {
+        return db.query(`SELECT * FROM articles WHERE article_id = $1;`, [article_id]).then((data) => {
+            const { rows } = data
+            return rows[0]
+        })
+    }
+    return db.query(`UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *;`, [inc_votes, article_id]).then((data) => {
+        const { rows } = data
+        return rows[0]
     })
 }
 
@@ -61,4 +70,5 @@ module.exports = {
     selectCommentsByArticleID,
     insertCommentByArticleID,
     deleteCommentByID
+    updateArticleByID
 }
