@@ -59,6 +59,16 @@ describe('/api/articles/:article_id', () => {
             })
         })
     });
+    test('GET 200: the returned article has the correct ID and a key of comment count', () => {
+        return request(app)
+        .get('/api/articles/1')
+        .expect(200)
+        .then((response) => {
+            const {article} = response.body
+            expect(article.article_id).toBe(1)
+            expect(article.comment_count).toBe(11)
+        })
+    });
     test('GET 404: returns an appropriate status and message when passed a valid id that does not exist', () => {
         return request(app)
         .get('/api/articles/999')
