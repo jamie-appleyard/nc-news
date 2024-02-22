@@ -47,7 +47,6 @@ describe('/api/articles/:article_id', () => {
         .then((response) => {
             const {article} = response.body
             expect(article.article_id).toBe(1)
-            expect(article.comment_count).toBe(11)
             expect(article).toMatchObject({
                 article_id: expect.any(Number),
                 title: expect.any(String),
@@ -56,9 +55,18 @@ describe('/api/articles/:article_id', () => {
                 body: expect.any(String),
                 created_at: expect.any(String),
                 votes: expect.any(Number),
-                article_img_url: expect.any(String),
-                comment_count: expect.any(Number)
+                article_img_url: expect.any(String)
             })
+        })
+    });
+    test('GET 200: the returned article has the correct ID and a key of comment count', () => {
+        return request(app)
+        .get('/api/articles/1')
+        .expect(200)
+        .then((response) => {
+            const {article} = response.body
+            expect(article.article_id).toBe(1)
+            expect(article.comment_count).toBe(11)
         })
     });
     test('GET 404: returns an appropriate status and message when passed a valid id that does not exist', () => {
