@@ -194,6 +194,57 @@ describe('/api/articles', () => {
     })
 })
 
+describe('/api/articles?topic', () => {
+    test('GET 200: Should return articles filtered by topic when passed an existing topic', () => {
+        return request(app)
+        .get('/api/articles?topic=cats')
+        .expect(200)
+        .then((response) => {
+            const { articles } = response.body
+            articles.forEach((article) => {
+                expect(article).toMatchObject({
+                    article_id: expect.any(Number),
+                    title: expect.any(String),
+                    topic: expect.any(String),
+                    author: expect.any(String),
+                    created_at: expect.any(String),
+                    votes: expect.any(Number),
+                    article_img_url: expect.any(String),
+                    comment_count: expect.any(Number)
+                })
+                expect(article.topic).toBe('cats')
+            })
+        });
+    });
+    test('GET 200: Should return an empty array when passed a topic that does exist but has no associated articles', () => {
+        return request(app)
+        .get('/api/articles?topic=paper')
+        .expect(200)
+        .then((response) => {
+            const { articles } = response.body
+            expect(articles).toHaveLength(0)
+        });
+    });
+    test('GET 400: Should return an appropriate status and message when passed a topic that does not exist', () => {
+        return request(app)
+        .get('/api/articles?topic=northcoders')
+        .expect(400)
+        .then((response) => {
+            expect(response.body.status).toBe(400)
+            expect(response.body.msg).toBe('Bad request')
+        });
+    });
+    test('GET 400: Should return an appropriate status and message when passed an invalid query', () => {
+        return request(app)
+        .get('/api/articles?badquery=ishoulderror')
+        .expect(400)
+        .then((response) => {
+            expect(response.body.status).toBe(400)
+            expect(response.body.msg).toBe('Bad request')
+        });
+    });
+});
+
 describe('/api/articles/:article_id/comments', () => {
     test('GET 200: returns an array of all comments for the article with the given article_id', () => {
         return request(app)
