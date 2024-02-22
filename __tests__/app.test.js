@@ -216,13 +216,22 @@ describe('/api/articles?topic', () => {
             })
         });
     });
-    test('GET 200: Should return an empty array when passed a topic that does not exist', () => {
+    test('GET 200: Should return an empty array when passed a topic that does exist but has no associated articles', () => {
         return request(app)
-        .get('/api/articles?topic=northcoders')
+        .get('/api/articles?topic=paper')
         .expect(200)
         .then((response) => {
             const { articles } = response.body
             expect(articles).toHaveLength(0)
+        });
+    });
+    test('GET 400: Should return an appropriate status and message when passed a topic that does not exist', () => {
+        return request(app)
+        .get('/api/articles?topic=northcoders')
+        .expect(400)
+        .then((response) => {
+            expect(response.body.status).toBe(400)
+            expect(response.body.msg).toBe('Bad request')
         });
     });
     test('GET 400: Should return an appropriate status and message when passed an invalid query', () => {
