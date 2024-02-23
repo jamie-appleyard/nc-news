@@ -9,7 +9,8 @@ const {
     deleteCommentByID,
     updateArticleByID,
     selectAllUsers,
-    selectUserByUsername
+    selectUserByUsername,
+    updateCommentByID
 } = require('../models/nc_news_models.js')
 
 const getEndpoints = (req, res, next) => {
@@ -98,6 +99,15 @@ const getUserByUsername = (req, res, next) => {
     })
 }
 
+const patchCommentByID = (req, res, next) => {
+    const { comment_id } = req.params
+    updateCommentByID(comment_id, req.body).then((comment) => {
+        res.status(200).send({ comment })
+    }).catch((err) => {
+        next(err)
+    })
+}
+
 module.exports = {
     getTopics,
     getEndpoints,
@@ -108,5 +118,6 @@ module.exports = {
     deleteComment,
     patchArticleByID,
     getAllUsers,
-    getUserByUsername
+    getUserByUsername,
+    patchCommentByID
 }

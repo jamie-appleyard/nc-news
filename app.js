@@ -10,7 +10,8 @@ const {
     deleteComment,
     patchArticleByID,
     getAllUsers,
-    getUserByUsername
+    getUserByUsername,
+    patchCommentByID
 } = require('./controllers/nc_news_controllers.js')
 
 app.use(express.json())
@@ -44,6 +45,9 @@ app.get('/api/users', getAllUsers)
 
 //Get a user object by username
 app.get('/api/users/:username', getUserByUsername)
+
+//Patch/Update vote count on a comment by comment ID
+app.patch('/api/comments/:comment_id', patchCommentByID)
 
 app.use((err, request, response, next) => {
     if (err.status && err.msg) {
