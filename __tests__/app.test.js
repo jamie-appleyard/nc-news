@@ -503,3 +503,75 @@ describe('/api/users/:username', () => {
         })
     });
 });
+
+describe('/api/comments/:comment_id', () => {
+    test('PATCH 200: updates the value of votes by a given number when number is positive on a comment with a matching comment_id and returns matching comment', () => {
+        const patchObj = { inc_votes : 10 }
+        return request(app)
+        .patch('/api/comments/1')
+        .send(patchObj)
+        .expect(200)
+        .then((response) => {
+            const { comment } = response.body
+            expect(comment.votes).toBe(26)
+            expect(comment.comment_id).toBe(1)
+        })
+    });
+    test('PATCH 200: updates the value of votes by a given number when number is negative on a comment with a matching comment_id and returns matching comment', () => {
+        const patchObj = { inc_votes : -10 }
+        return request(app)
+        .patch('/api/comments/1')
+        .send(patchObj)
+        .expect(200)
+        .then((response) => {
+            const { comment } = response.body
+            expect(comment.votes).toBe(6)
+            expect(comment.comment_id).toBe(1)
+        })
+    });
+    test('PATCH 200: Respond with an uneditted comment with matching article id if passed invalid patch object data', () => {
+        const patchObj = { bad_data : 'I\'m bad data' }
+        return request(app)
+        .patch('/api/comments/1')
+        .send(patchObj)
+        .expect(200)
+        .then((response) => {
+            const { comment } = response.body
+            expect(comment.comment_id).toBe(1)
+            expect(comment.votes).toBe(16)
+        })
+    });
+    test('PATCH 404: Respond with an appropriate status code and error message when passed a valid ID that does not exist', () => {
+        const patchObj = { inc_votes : 10 }
+        return request(app)
+        .patch('/api/comments/99999')
+        .send(patchObj)
+        .expect(404)
+        .then((response) => {
+            expect(response.body.status).toBe(404)
+            expect(response.body.msg).toBe('ID does\'nt exist')
+        })
+    });
+    test('PATCH 400: Respond with an appropriate status code and error message when passed an invalid ID', () => {
+        const patchObj = { inc_votes : 10 }
+        return request(app)
+        .patch('/api/comments/myArticle')
+        .send(patchObj)
+        .expect(400)
+        .then((response) => {
+            expect(response.body.status).toBe(400)
+            expect(response.body.msg).toBe('Invalid parameter')
+        })
+    });
+    test('PATCH 400: Respond with an appropriate status code and error message when passed a patch object containing an invalid value', () => {
+        const patchObj = { inc_votes : 'I am bad data' }
+        return request(app)
+        .patch('/api/comments/1')
+        .send(patchObj)
+        .expect(400)
+        .then((response) => {
+            expect(response.body.status).toBe(400)
+            expect(response.body.msg).toBe('Invalid parameter')
+        })
+    });
+});
