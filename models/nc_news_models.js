@@ -173,6 +173,18 @@ const insertArticle = (body) => {
     })
 }
 
+const insertTopic = (body) => {
+    const { slug } = body
+    const { description } = body
+    if (!slug || !description ) {
+        return Promise.reject({status:400, msg:'Bad request'})
+    }
+    return db.query(format(`INSERT INTO topics (slug, description) VALUES %L RETURNING *`, [[slug, description]])).then((data) => {
+        const { rows } = data
+        return rows[0]
+    })
+}
+
 module.exports = {
     selectTopics,
     selectArticleByID,
@@ -184,5 +196,6 @@ module.exports = {
     selectAllUsers,
     selectUserByUsername,
     updateCommentByID,
-    insertArticle
+    insertArticle,
+    insertTopic
 }
