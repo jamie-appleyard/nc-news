@@ -480,3 +480,26 @@ describe('/api/tropics', () => {
         .expect(404)
     })
 })
+
+describe('/api/users/:username', () => {
+    test('GET 200: eturns the user object with the given username', () => {
+        return request(app)
+        .get('/api/users/lurker')
+        .expect(200)
+        .then((response) => {
+            const { user } = response.body
+            expect(user.username).toBe('lurker')
+            expect(user.name).toBe('do_nothing')
+            expect(user.avatar_url).toBe('https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png')
+        })
+    });
+    test('GET 404: returns an appropriate status and message when passed a valid id that does not exist', () => {
+        return request(app)
+        .get('/api/users/billyjoel')
+        .expect(404)
+        .then((response) => {
+            expect(response.body.status).toBe(404)
+            expect(response.body.msg).toBe('ID does\'nt exist')
+        })
+    });
+});

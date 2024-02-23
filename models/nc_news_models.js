@@ -124,6 +124,17 @@ const selectAllUsers = () => {
     })
 }
 
+const selectUserByUsername = (params) => {
+    const { username } = params
+    return db.query(`SELECT * FROM users WHERE username = $1`, [username]).then((data) => {
+        const { rows } = data
+        if (rows.length === 0) {
+            return Promise.reject({status:404, msg:'ID does\'nt exist'})
+        }
+        return rows[0]
+    })
+}
+
 module.exports = {
     selectTopics,
     selectArticleByID,
@@ -132,5 +143,6 @@ module.exports = {
     insertCommentByArticleID,
     deleteCommentByID,
     updateArticleByID,
-    selectAllUsers
+    selectAllUsers,
+    selectUserByUsername
 }
