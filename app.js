@@ -9,7 +9,8 @@ const {
     postCommentByArticleID,
     deleteComment,
     patchArticleByID,
-    getAllUsers
+    getAllUsers,
+    getUserByUsername
 } = require('./controllers/nc_news_controllers.js')
 
 app.use(express.json())
@@ -40,6 +41,9 @@ app.delete('/api/comments/:comment_id', deleteComment)
 
 //Get all users
 app.get('/api/users', getAllUsers)
+
+//Get a user object by username
+app.get('/api/users/:username', getUserByUsername)
 
 app.use((err, request, response, next) => {
     if (err.status && err.msg) {
