@@ -21,22 +21,57 @@ const selectArticleByID = (id) => {
 }
 
 const selectArticles = (query) => {
-    if (Object.keys(query).length > 0) {
-        if (query.topic) {
-            const { topic } = query
-            const validTopics = ['mitch', 'cats', 'paper']
-            if (validTopics.includes(topic)) {
-                return db.query(`SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id)::INT AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id WHERE articles.topic = $1 GROUP BY articles.article_id ORDER BY articles.created_at DESC;`, [topic]).then((result) => {
-                    return result.rows
-                })
-            } else {
-                return Promise.reject({status:400, msg:'Bad request'})
-            }
+    const validQueries = ['topic', 'sort_by', 'order']
+    let invalidQuery = false
+    Object.keys(query).forEach((key) => {
+        if (!validQueries.includes(key)) {
+            invalidQuery = true;
+        }
+    })
+
+    if (invalidQuery) {
+        return Promise.reject({status:400, msg:'Bad request'})
+    }
+
+    let queryString = `SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id)::INT AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id`
+
+    if (query.topic) {
+        const { topic } = query
+        const validTopics = ['mitch', 'cats', 'paper']
+        if (validTopics.includes(topic)) {
+            queryString += ` WHERE articles.topic = '${topic}'`
         } else {
             return Promise.reject({status:400, msg:'Bad request'})
         }
     }
-    return db.query(`SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id)::INT AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id ORDER BY articles.created_at DESC;`).then((result) => {
+
+    queryString += ` GROUP BY articles.article_id`
+
+    if (query.sort_by) {
+        const { sort_by } = query
+        const validSortBy = ['title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url']
+        if (validSortBy.includes(sort_by)) {
+            queryString += ` ORDER BY articles.${ sort_by }`
+        } else {
+            return Promise.reject({status:400, msg:'Bad request'})
+        }
+    } else {
+        queryString += ` ORDER BY articles.created_at`
+    }
+
+    if (query.order) {
+        const { order } = query
+        const validOrder = ['ASC', 'DESC']
+        if (validOrder.includes(order)) {
+            queryString += ` ${order}`
+        } else {
+            return Promise.reject({status:400, msg:'Bad request'})
+        }
+    } else {
+        queryString += ' DESC'
+    }
+
+    return db.query(queryString).then((result) => {
         return result.rows
     })
 }

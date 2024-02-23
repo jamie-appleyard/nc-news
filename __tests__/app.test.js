@@ -255,6 +255,51 @@ describe('/api/articles?topic', () => {
     });
 });
 
+describe('/api/articles?sort_by?order', () => {
+    test('returns articles sorted by the given column (default = created_at), ordered by the given order query (default=DESC).', () => {
+        return request(app)
+        .get('/api/articles?sort_by=title&order=ASC')
+        .expect(200)
+        .then((response) => {
+            const { articles } = response.body
+            articles.forEach((article) => {
+                expect(article).toMatchObject({
+                    article_id: expect.any(Number),
+                    title: expect.any(String),
+                    topic: expect.any(String),
+                    author: expect.any(String),
+                    created_at: expect.any(String),
+                    votes: expect.any(Number),
+                    article_img_url: expect.any(String),
+                    comment_count: expect.any(Number)
+                })
+            })
+            expect(articles).toBeSorted({ key : 'title', descending : false})
+        })
+    });
+    test('returns articles sorted by default to created_at and ordered by default to DESC.', () => {
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then((response) => {
+            const { articles } = response.body
+            articles.forEach((article) => {
+                expect(article).toMatchObject({
+                    article_id: expect.any(Number),
+                    title: expect.any(String),
+                    topic: expect.any(String),
+                    author: expect.any(String),
+                    created_at: expect.any(String),
+                    votes: expect.any(Number),
+                    article_img_url: expect.any(String),
+                    comment_count: expect.any(Number)
+                })
+            expect(articles).toBeSorted({ key : 'created_at', descending : true})
+            })
+        })
+    });
+});
+
 describe('/api/articles/:article_id/comments', () => {
     test('GET 200: returns an array of all comments for the article with the given article_id', () => {
         return request(app)
