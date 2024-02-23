@@ -11,7 +11,8 @@ const {
     patchArticleByID,
     getAllUsers,
     getUserByUsername,
-    patchCommentByID
+    patchCommentByID,
+    postArticle
 } = require('./controllers/nc_news_controllers.js')
 
 app.use(express.json())
@@ -48,6 +49,9 @@ app.get('/api/users/:username', getUserByUsername)
 
 //Patch/Update vote count on a comment by comment ID
 app.patch('/api/comments/:comment_id', patchCommentByID)
+
+//Post a new article
+app.post('/api/articles', postArticle)
 
 app.use((err, request, response, next) => {
     if (err.status && err.msg) {

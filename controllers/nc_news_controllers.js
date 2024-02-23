@@ -10,7 +10,8 @@ const {
     updateArticleByID,
     selectAllUsers,
     selectUserByUsername,
-    updateCommentByID
+    updateCommentByID,
+    insertArticle
 } = require('../models/nc_news_models.js')
 
 const getEndpoints = (req, res, next) => {
@@ -108,6 +109,14 @@ const patchCommentByID = (req, res, next) => {
     })
 }
 
+const postArticle = (req, res, next) => {
+    insertArticle(req.body).then((article) => {
+        res.status(200).send({article})
+    }).catch((err) => {
+        next(err)
+    })
+}
+
 module.exports = {
     getTopics,
     getEndpoints,
@@ -119,5 +128,6 @@ module.exports = {
     patchArticleByID,
     getAllUsers,
     getUserByUsername,
-    patchCommentByID
+    patchCommentByID,
+    postArticle
 }

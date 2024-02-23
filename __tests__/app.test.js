@@ -201,7 +201,65 @@ describe('/api/articles', () => {
                 expect(article.hasOwnProperty('body')).toBe(false)
             })
         })
-    })
+    });
+    test('POST 200: Posts a new article to articles, returns the new article', () => {
+        const newArticle = {
+            author: 'lurker',
+            title: 'My coding journey',
+            body: 'Eat, Sleep, Code, Repeat',
+            topic: 'paper',
+            article_img_url: 'www.hello.com'
+        }
+        return request(app)
+        .post('/api/articles')
+        .send(newArticle)
+        .expect(200)
+        .then((response) => {
+            const { article } = response.body
+            expect(article.author).toBe('lurker')
+            expect(article.title).toBe('My coding journey')
+            expect(article.body).toBe('Eat, Sleep, Code, Repeat')
+            expect(article.topic).toBe('paper')
+            expect(article.article_img_url).toBe('www.hello.com')
+            expect(article).toHaveProperty('article_id')
+            expect(article).toHaveProperty('votes')
+            expect(article.votes).toBe(0)
+            expect(article).toHaveProperty('created_at')
+            expect(article).toHaveProperty('comment_count')
+            expect(article.comment_count).toBe(0)
+        })
+    });
+    test('POST 200: Default the article_img_url key if not provided to user.icon', () => {
+        const newArticle = {
+            author: 'lurker',
+            title: 'My coding journey',
+            body: 'Eat, Sleep, Code, Repeat',
+            topic: 'paper',
+        }
+        return request(app)
+        .post('/api/articles')
+        .send(newArticle)
+        .expect(200)
+        .then((response) => {
+            const { article } = response.body
+            expect(article.article_img_url).toBe('user.icon')
+        })
+    });
+    test('POST 400: Returns appropriate status and message if post object is missing one or more of the required keys', () => {
+        const newArticle = {
+            author: 'lurker',
+            title: 'My coding journey',
+            article_img_url: 'www.hello.com'
+        }
+        return request(app)
+        .post('/api/articles')
+        .send(newArticle)
+        .expect(400)
+        .then((response) => {
+            expect(response.body.status).toBe(400)
+            expect(response.body.msg).toBe('Bad request')
+        })
+    });
 })
 
 describe('/api/articles?topic', () => {

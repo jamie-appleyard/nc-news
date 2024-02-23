@@ -155,6 +155,24 @@ const updateCommentByID = (comment_id, body) => {
     })
 }
 
+const insertArticle = (body) => {
+    const newArticle = body
+    if (!newArticle.title || !newArticle.topic || !newArticle.author || ! newArticle.body) {
+        return Promise.reject({status:400, msg:'Bad request'})
+    }
+    if (!newArticle.article_img_url) {
+        newArticle.article_img_url = 'user.icon'
+    }
+    newArticle.votes = 0
+    newArticle.created_at = new Date()
+    const valuesArray = [[newArticle.title, newArticle.topic, newArticle.author, newArticle.body, newArticle.created_at, newArticle.votes, newArticle.article_img_url]]
+    return db.query(format(`INSERT INTO articles (title, topic, author, body, created_at, votes, article_img_url) VALUES %L RETURNING *`, valuesArray)).then((data) => {
+        const { rows } = data
+        rows[0].comment_count = 0
+        return rows[0]
+    })
+}
+
 module.exports = {
     selectTopics,
     selectArticleByID,
@@ -165,5 +183,6 @@ module.exports = {
     updateArticleByID,
     selectAllUsers,
     selectUserByUsername,
-    updateCommentByID
+    updateCommentByID,
+    insertArticle
 }
