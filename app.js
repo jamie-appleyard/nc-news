@@ -12,7 +12,8 @@ const {
     getAllUsers,
     getUserByUsername,
     patchCommentByID,
-    postArticle
+    postArticle,
+    postTopic
 } = require('./controllers/nc_news_controllers.js')
 
 app.use(express.json())
@@ -52,6 +53,9 @@ app.patch('/api/comments/:comment_id', patchCommentByID)
 
 //Post a new article
 app.post('/api/articles', postArticle)
+
+//Post a new topic
+app.post('/api/topics', postTopic)
 
 app.use((err, request, response, next) => {
     if (err.status && err.msg) {

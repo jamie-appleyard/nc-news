@@ -37,6 +37,34 @@ describe('/api/topics', () => {
             })
         });
     })
+    test('POST 200: Should post a new topic object', () => {
+        const newTopic = {
+            slug: 'Jamie',
+            description: 'A bit taboo',
+        }
+        return request(app)
+        .post('/api/topics')
+        .send(newTopic)
+        .expect(200)
+        .then((response) => {
+            const { topic } = response.body
+            expect(topic.slug).toBe('Jamie')
+            expect(topic.description).toBe('A bit taboo')
+        })
+    });
+    test('POST 400: Returns appropriate status and message if post object is missing one or more of the required keys', () => {
+        const newTopic = {
+            slug: 'Jamie',
+        }
+        return request(app)
+        .post('/api/articles')
+        .send(newTopic)
+        .expect(400)
+        .then((response) => {
+            expect(response.body.status).toBe(400)
+            expect(response.body.msg).toBe('Bad request')
+        })
+    });
 });
 
 describe('/api/articles/:article_id', () => {
