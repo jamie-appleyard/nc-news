@@ -1,4 +1,5 @@
 const express = require('express')
+const cors = require('cors')
 const app = express()
 const {
     getTopics,
@@ -16,6 +17,7 @@ const {
     postTopic
 } = require('./controllers/nc_news_controllers.js')
 
+app.use(cors())
 app.use(express.json())
 
 //Returns a JSON object giving a representation of all endpoints
