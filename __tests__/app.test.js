@@ -321,15 +321,15 @@ describe('/api/articles?topic', () => {
             expect(articles).toHaveLength(0)
         });
     });
-    test('GET 400: Should return an appropriate status and message when passed a topic that does not exist', () => {
-        return request(app)
-        .get('/api/articles?topic=northcoders')
-        .expect(400)
-        .then((response) => {
-            expect(response.body.status).toBe(400)
-            expect(response.body.msg).toBe('Bad request')
-        });
-    });
+    // test('GET 400: Should return an appropriate status and message when passed a topic that does not exist', () => {
+    //     return request(app)
+    //     .get('/api/articles?topic=northcoders')
+    //     .expect(400)
+    //     .then((response) => {
+    //         expect(response.body.status).toBe(400)
+    //         expect(response.body.msg).toBe('Bad request')
+    //     });
+    // });
     test('GET 400: Should return an appropriate status and message when passed an invalid query', () => {
         return request(app)
         .get('/api/articles?badquery=ishoulderror')

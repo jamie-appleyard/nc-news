@@ -35,14 +35,19 @@ const selectArticles = (query) => {
 
     let queryString = `SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id)::INT AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id`
 
+    // if (query.topic) {
+    //     const { topic } = query
+    //     const validTopics = ['mitch', 'cats', 'paper'] //
+    //     if (validTopics.includes(topic)) {
+    //         queryString += ` WHERE articles.topic = '${topic}'`
+    //     } else {
+    //         return Promise.reject({status:400, msg:'Bad request'})
+    //     }
+    // }
+
     if (query.topic) {
         const { topic } = query
-        const validTopics = ['mitch', 'cats', 'paper']
-        if (validTopics.includes(topic)) {
-            queryString += ` WHERE articles.topic = '${topic}'`
-        } else {
-            return Promise.reject({status:400, msg:'Bad request'})
-        }
+        queryString += ` WHERE articles.topic = '${topic}'`
     }
 
     queryString += ` GROUP BY articles.article_id`
